@@ -11,14 +11,24 @@ public class Triangle {
     int v_count;
     int e_count;
 
-
+	//triangle constructor
     public Triangle() {
         this.edges = new Edge[3];
         this.vertices = new Vertex[3];
         this.v_count = 0;
         this.e_count = 0;
     }
-
+	//triangle constructor with vertex values
+    public Triangle(char a, char b, char c) {
+        this.edges = new Edge[3];
+        this.vertices = new Vertex[3];
+	this.v_count = 0;
+        this.e_count = 0;
+	addVertex(a);
+	addVertex(b);
+	addVertex(c);
+    }
+	//adds a vertex to the triangle
     public void addVertex(char c) {
         char cap = Character.toUpperCase(c);
         if((!vertexExists(cap) ) && (v_count < 3)) {
@@ -28,16 +38,15 @@ public class Triangle {
         }
 
     }
-
+	
+	//adds edge to triangle
     public void addEdge(double distance, char from, char to) {
         from = Character.toUpperCase(from);
         to = Character.toUpperCase(to);
+	    //if one vertex does not exist then return with no changes.
         if(!vertexExists(from) || !vertexExists(to)) return;
-
-
-        //the edge cannot already exist if it is going to be added, and it needs to have
-        // a maximum of 3 edges
-
+	    
+	//if the edge does not exist, and there aren't already 3 edges in the triangle then add another edge
         if((findEdge(from, to) == null) && e_count < 3) {
             //creates edge object
             Edge e = new Edge(distance, returnVertex(from), returnVertex(to));
@@ -47,44 +56,8 @@ public class Triangle {
         }
     }
 
-//	public void addDoubleEdge(int distance, char from, char to) {
-//		addEdge(distance, from, to);
-//		addEdge(distance, to, from);
-//	}
 
-
-	/*public void removeVertex(char a) {
-		a = Character.toUpperCase(a);
-		for(Vertex v : vertices) {
-			if(v.name == a) {
-				vertices.remove(v);
-				removeE(v);
-				return;
-			}
-		}
-	}
-	private void removeE(Vertex ver){
-		for(Edge e : ver.inList) {
-			edges.remove(e);
-		}
-		for(Edge e : ver.outList) {
-			edges.remove(e);
-		}
-	}
-
-
-
-	public void removeEdge(Edge ed) {
-		for(Edge e : edges) {
-			if(e.equals(ed)) {
-				edges.remove(e);
-				return;
-			}
-		}
-	}
-	*/
-
-
+	//returns address to vertex with specific name
     public Vertex returnVertex(char c) {
         c = Character.toUpperCase(c);
         for(Vertex v : vertices) {
@@ -94,7 +67,7 @@ public class Triangle {
         }
         return null;
     }
-
+	//boolean function returning whether the vertex exists or not
     private boolean vertexExists(char c) {
         c = Character.toUpperCase(c);
 
@@ -105,7 +78,7 @@ public class Triangle {
         }
         return false;
     }
-
+	//given the name of 2 different vertices, find the edge that connects them
     private Edge findEdge(char from, char to) {
         from = Character.toUpperCase(from);
         to = Character.toUpperCase(to);
@@ -124,7 +97,8 @@ public class Triangle {
         }
         return null;
     }
-
+	
+	//gives edges their proper label based on the vertices they join together
     public void setNames(){
         if(edges.length == 3){
             for(Edge e : edges){
@@ -140,7 +114,7 @@ public class Triangle {
             }
         }
     }
-
+	// print values of all vertices, angles, and edges
     public String printVE() {
         setNames();
         String s = "";
@@ -150,6 +124,7 @@ public class Triangle {
         return s;
     }
 
+	//prints all the edges of a specific vertex
     public String printEdgesofV(Vertex v) {
         String s = "Edges:\n";
         for(Edge e : v.edgeList) {
