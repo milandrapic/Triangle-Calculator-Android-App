@@ -10,24 +10,27 @@ public class TriangleFinder {
     static char c = 'c';
 
 
-
+        //calculates values of triangle based on different values given
     public static Triangle calculate(double a, double b, double c, double a1, double a2, double a3){
-
-        //SSS
+        
+        //all there methods include the values needed to compute the rest of the triangle. and a "barcode" string
+        //to let the function know what side or angle they are giving a value to
+        
+        //SSS (side-side-side)
 
         if(c>0 && b > 0 && a>0) return SSS(a,b,c, "abc");
 
-        //ASA
+        //ASA (angle-side-angle)
         if(a1 > 0 && a2 > 0 && c > 0) return ASA(c,a1,a2,"cAB");
         if(a2 > 0 && a3 > 0 && a > 0) return ASA(a,a2,a3, "aBC");
         if(a1 > 0 && a3 > 0 && b > 0) return ASA(b,a1,a3, "bAC");
 
-        //SAS
+        //SAS (side-angle-side)
         if (c > 0 && b > 0 && a1 > 0) return SAS(b,c,a1, "bcA");
         if (c > 0 && a > 0 && a2 > 0) return SAS(a,c,a2, "acB");
         if (b > 0 && a > 0 && a3 > 0) return SAS(a,b,a3, "abC");
 
-        //AAS
+        //AAS (angle-angle-side)
         if (a3 > 0 && a1 > 0 && c > 0) return AAS(a1,a3,c, "cAC");
         if (a3 > 0 && a2 > 0 && c > 0) return AAS(a2,a3,c, "cBC");
         if (a2 > 0 && a1 > 0 && a > 0) return AAS(a2,a1,a, "aAB");
@@ -36,7 +39,7 @@ public class TriangleFinder {
         if (a2 > 0 && a3 > 0 && b > 0) return AAS(a3,a2,b, "bBC");
 
 
-        //SSA
+        //SSA (side-side-angle)
         if (c > 0 && b > 0 && a2 > 0) return SSA(c,b,a2, "bcB");
         if (c > 0 && b > 0 && a3 > 0) return SSA(b,c,a3, "bcC");
         if (c > 0 && a > 0 && a1 > 0) return SSA(c,a,a1, "acA");
@@ -47,7 +50,7 @@ public class TriangleFinder {
 
         return null;
     }
-
+    //helper method, returning the two vertex that connect a side
     private static char[] fromto(char v){
 
         if(v == 'A' || v == 'a'){
@@ -64,7 +67,9 @@ public class TriangleFinder {
         }
         return null;
     }
-
+    
+    //helper method finds missing side or vertex if given 2.
+    //precondition: the larger ascii char must be y
     private static char fm(char x, char y){
         if((y - x)== 2) return 'B';
         else if((y - x) == 1){
@@ -73,31 +78,28 @@ public class TriangleFinder {
         }
         return 0;
     }
-
+    //(angle-angle-side)
+    //parameters: values of angles and side. a2 represents the angle opposite to the side
     private static Triangle AAS(double a1, double a2, double e, String s) {
         Triangle t = new Triangle();
         t.addVertex(a);
         t.addVertex(b);
         t.addVertex(c);
-        t.returnVertex(s.charAt(1)).angle = a1;
-        t.returnVertex(s.charAt(2)).angle = a2;
 
-
+        //find last angle based on value of other 2
         double a3 = findMissingAngle(a1, a2);
 
-
-        t.returnVertex(fm(s.charAt(1),s.charAt(2))).angle = a3;
-
-
-
+        //find side opposite to a1 using sin law
         double e2 = sinLawFindSide(e, a2, a1);
+        //find the last side using the sin law
         double e3 = sinLawFindSide(e, a2, a3);
 
         char z0,z1,z2, x1,x2,x3;
+        //values of barcode
         z0 = s.charAt(0);
         z1 = s.charAt(1);
         z2 = s.charAt(2);
-
+        
         if(Character.toUpperCase(z0) == z1){
             x1 = z1;
             x2 = z2;
@@ -105,11 +107,12 @@ public class TriangleFinder {
             char[] y1 = fromto(x1);
             char[] y2 = fromto(x2);
             char[] y3 = fromto(x3);
+            t.returnVertex(z1).angle = a2;
+            t.returnVertex(z2).angle = a1;
+            t.returnVertex(fm(z1,z2)).angle = a3;
             t.addEdge(e, y1[0], y1[1]);
             t.addEdge(e2, y2[0], y2[1]);
             t.addEdge(e3, y3[0], y3[1]);
-            //if(z2 == 'C'){t.addEdge(e2,a,b); t.addEdge(e3,a,b);}
-            //if(z2 == 'B'){t.addEdge(e2,a,c);}
         }
         else if(Character.toUpperCase(z0) == z2){
             x1 = z2;
@@ -118,11 +121,12 @@ public class TriangleFinder {
             char[] y1 = fromto(x1);
             char[] y2 = fromto(x2);
             char[] y3 = fromto(x3);
+            t.returnVertex(z2).angle = a2;
+            t.returnVertex(z1).angle = a1;
+            t.returnVertex(fm(z1,z2)).angle = a3;
             t.addEdge(e, y1[0], y1[1]);
             t.addEdge(e2, y2[0], y2[1]);
             t.addEdge(e3, y3[0], y3[1]);
-            //if(z1 == 'A'){t.addEdge(e2,b,c);}
-            //if(z1 == 'B'){t.addEdge(e2,a,c);}
         }
 
 
